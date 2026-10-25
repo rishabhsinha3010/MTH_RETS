@@ -5,71 +5,45 @@
 
 const FIORI_ROLES_CONFIG = {
     'Admin': {
-        name: 'Naga SaiTeja',
         title: 'System Administrator',
-        avatar: 'VM',
         color: '#0070f2',
         apps: ['customer-management', 'rentals', 'locations', 'fleet-overview', 'inspections', 'damage-charge-approval', 'repair-jobs', 'maintenance-planner']
     },
     'Dispatcher': {
-        name: 'Durga SaiPrasady',
         title: 'Rental Dispatcher & Coordinator',
-        avatar: 'KR',
         color: '#00838f',
         apps: ['customer-management', 'rentals', 'locations', 'fleet-overview', 'inspections']
     },
     'YardWorker': {
-        name: 'Kesav Maradani',
         title: 'Senior Yard Inspector',
-        avatar: 'RP',
         color: '#107e3e',
         apps: ['fleet-overview', 'locations', 'inspections']
     },
     'BillingClerk': {
-        name: 'HariPriya',
         title: 'Billing & Dispute Specialist',
-        avatar: 'AS',
         color: '#8e44ad',
         apps: ['rentals', 'damage-charge-approval']
     },
     'Technician': {
-        name: 'Rohan Thakre ',
         title: 'Lead Workshop Technician',
-        avatar: 'MD',
         color: '#e67e22',
         apps: ['repair-jobs', 'maintenance-planner', 'fleet-overview', 'locations']
     },
     'Manager': {
-        name: 'Varshith Kumar',
         title: 'Operations & Fleet Director',
-        avatar: 'SV',
         color: '#2980b9',
         apps: ['customer-management', 'rentals', 'locations', 'fleet-overview', 'inspections', 'damage-charge-approval', 'repair-jobs', 'maintenance-planner']
     },
     'Auditor': {
-        name: 'Maithili Thakre ',
         title: 'Compliance & Quality Auditor',
-        avatar: 'PN',
         color: '#d35400',
         apps: ['customer-management', 'rentals', 'locations', 'fleet-overview', 'inspections', 'damage-charge-approval']
     },
     'None': {
-        name: '',
         title: 'No role assigned - ask an admin to assign a sprint role collection',
-        avatar: '?',
         color: '#bb0000',
         apps: []
     }
-};
-
-const FIORI_USERS = {
-    'admin': { role: 'Admin', pass: 'admin123' },
-    'dispatcher': { role: 'Dispatcher', pass: 'disp123' },
-    'inspector': { role: 'YardWorker', pass: 'yard123' },
-    'finance': { role: 'BillingClerk', pass: 'finance123' },
-    'technician': { role: 'Technician', pass: 'tech123' },
-    'manager': { role: 'Manager', pass: 'mgr123' },
-    'auditor': { role: 'Auditor', pass: 'audit123' }
 };
 
 // Check current user session
@@ -83,22 +57,6 @@ function getFioriSession() {
     return null;
 }
 
-function setFioriSession(username) {
-    const userCfg = FIORI_USERS[username] || { role: 'Admin' };
-    const roleCfg = FIORI_ROLES_CONFIG[userCfg.role] || FIORI_ROLES_CONFIG['Admin'];
-    const session = {
-        username: username,
-        role: userCfg.role,
-        name: roleCfg.name,
-        title: roleCfg.title,
-        avatar: roleCfg.avatar,
-        plant: 'PLANT-NGP (Nagpur Yard)',
-        loginTime: new Date().toISOString()
-    };
-    localStorage.setItem('fiori_user_session', JSON.stringify(session));
-    return session;
-}
-
 function clearFioriSession() {
     localStorage.removeItem('fiori_user_session');
 }
@@ -109,7 +67,7 @@ const FIORI_ROLE_PRIORITY = ['Admin', 'Manager', 'Dispatcher', 'BillingClerk', '
 /**
  * Real SAP login: behind the approuter the user is already authenticated by XSUAA.
  * Read the user and their scopes from the approuter user API and build the session from them.
- * Resolves to null when there is no approuter (local `cds watch`), so the demo login is used instead.
+ * Resolves to null when there is no approuter (e.g. local `cds watch`): the user is then not signed in.
  */
 async function loadXsuaaSession() {
     try {
@@ -145,18 +103,28 @@ function isXsuaaSession(session) {
 
 // In sub-apps: Guard access and render top Fiori navigation bar
 function initSubAppGuard(currentAppId, currentAppTitle) {
-    let session = getFioriSession();
-    
-    // Behind the approuter, refresh the session from the real XSUAA user and reload if it changed
+    // Only a session built from the real SAP (XSUAA) user counts
+    const stored = getFioriSession();
+    const cached = isXsuaaSession(stored) ? stored : null;
+    let session = cached;
+
+    // Re-check the SAP user and reload when it differs from the cached session (new login, role change, logout)
     loadXsuaaSession().then(real => {
-        if (real && (!isXsuaaSession(session) || real.role !== session.role || real.username !== session.username)) {
+        if (!real) {
+            if (stored) {
+                clearFioriSession();
+                if (cached) window.location.reload();
+            }
+            return;
+        }
+        if (!cached || real.role !== cached.role || real.username !== cached.username) {
             window.location.reload();
         }
     });
 
-    // Default to admin if no session exists yet for smooth local testing
+    // Not signed in with SAP: no app access
     if (!session) {
-        session = setFioriSession('admin');
+        session = { role: 'None', name: 'Not signed in', avatar: '?', plant: '-' };
     }
 
     const roleCfg = FIORI_ROLES_CONFIG[session.role];
@@ -356,9 +324,7 @@ function getAllowedRolesForApp(appId) {
 
 // Export globals
 window.FIORI_ROLES_CONFIG = FIORI_ROLES_CONFIG;
-window.FIORI_USERS = FIORI_USERS;
 window.getFioriSession = getFioriSession;
-window.setFioriSession = setFioriSession;
 window.clearFioriSession = clearFioriSession;
 window.loadXsuaaSession = loadXsuaaSession;
 window.isXsuaaSession = isXsuaaSession;

@@ -714,83 +714,8 @@
                 <div class="login-tag">🔐 Role-Based Access Control (RBAC)</div>
             </div>
 
-            <div id="login-error-box" class="login-error">
-                <span>⚠️</span>
-                <span id="login-error-msg">Invalid user credentials or unrecognized role.</span>
-            </div>
-
-            <form id="fiori-login-form" onsubmit="handleFormLogin(event)">
-                <div class="form-group">
-                    <label class="form-label" for="login-username">SAP Universal ID / Username</label>
-                    <input type="text" id="login-username" class="form-input" placeholder="e.g. admin, dispatcher, inspector, finance, technician" value="dispatcher" required autocomplete="username">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="login-password">Password</label>
-                    <input type="password" id="login-password" class="form-input" placeholder="Enter password (e.g. disp123)" value="disp123" required autocomplete="current-password">
-                </div>
-
-                <button type="submit" id="btn-login-submit" class="btn-primary">
-                    Sign In to Fiori Launchpad &rarr;
-                </button>
-            </form>
-
-            <!-- Quick-Access Personas Grid -->
-            <div class="personas-section">
-                <div class="personas-title">&bull; Quick Sign-In as Business Persona &bull;</div>
-                <div class="personas-grid">
-                    
-                    <button type="button" class="persona-btn" onclick="quickLogin('dispatcher')">
-                        <div class="persona-avatar" style="background:#00838f;">KR</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Durga SaiPrasad</div>
-                            <div class="persona-role">📋 Dispatcher (Customer & Fleet)</div>
-                        </div>
-                    </button>
-
-                    <button type="button" class="persona-btn" onclick="quickLogin('admin')">
-                        <div class="persona-avatar" style="background:#0070f2;">VM</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Naga SaiTeja</div>
-                            <div class="persona-role">👔 Administrator (All Apps)</div>
-                        </div>
-                    </button>
-
-                    <button type="button" class="persona-btn" onclick="quickLogin('inspector')">
-                        <div class="persona-avatar" style="background:#107e3e;">RP</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Kesav Maradani</div>
-                            <div class="persona-role">🚜 Yard Inspector (Check-In)</div>
-                        </div>
-                    </button>
-
-                    <button type="button" class="persona-btn" onclick="quickLogin('finance')">
-                        <div class="persona-avatar" style="background:#8e44ad;">AS</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Hari Priya</div>
-                            <div class="persona-role">💳 Billing Specialist (Charges)</div>
-                        </div>
-                    </button>
-
-                    <button type="button" class="persona-btn" onclick="quickLogin('technician')">
-                        <div class="persona-avatar" style="background:#e67e22;">MD</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Rohan Thakre </div>
-                            <div class="persona-role">🔧 Lead Technician (Repairs)</div>
-                        </div>
-                    </button>
-
-                    <button type="button" class="persona-btn" onclick="quickLogin('manager')">
-                        <div class="persona-avatar" style="background:#2980b9;">SV</div>
-                        <div class="persona-info">
-                            <div class="persona-name">Varshith Kumar</div>
-                            <div class="persona-role">💼 Operations Director</div>
-                        </div>
-                    </button>
-
-                </div>
-            </div>
-
+            <p id="login-status" style="text-align:center; color:#556b82; margin:1rem 0;">Signing in with SAP&hellip;</p>
+            <a id="btn-sap-signin" href="/" class="btn-primary" style="display:none; text-align:center; text-decoration:none;">Sign in with SAP &rarr;</a>
         </div>
     </div>
 
@@ -810,14 +735,10 @@
 
             <div class="shell-actions">
                 <div class="user-capsule">
-                    <div class="user-avatar-circle" id="shell-user-avatar">AD</div>
-                    <span id="shell-user-name" style="font-weight:600;">Administrator</span>
-                    <span class="user-role-tag" id="shell-user-role">ADMIN</span>
+                    <div class="user-avatar-circle" id="shell-user-avatar"></div>
+                    <span id="shell-user-name" style="font-weight:600;"></span>
+                    <span class="user-role-tag" id="shell-user-role"></span>
                 </div>
-
-                <button class="btn-shell" id="btn-switch-role" onclick="openSwitchModal()" title="Switch Persona / Role">
-                    <span>🔄 Switch Role</span>
-                </button>
 
                 <button class="btn-shell" onclick="handleLogout()" title="Log out" style="background:rgba(239, 68, 68, 0.2); border-color:rgba(239, 68, 68, 0.4);">
                     <span>🚪 Sign Out</span>
@@ -1042,91 +963,23 @@
 
     </div>
 
-    <!-- 3. MODAL FOR FAST SWITCHING PERSONAS -->
-    <div id="switch-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Switch Enterprise Role Persona</h3>
-                <button class="modal-close" onclick="closeSwitchModal()">&times;</button>
-            </div>
-            <p style="font-size:0.88rem; color:#64748b; margin-bottom:1.25rem;">
-                Select a business persona below to instantly switch roles and inspect the launchpad apps authorized for that profile:
-            </p>
-            <div class="personas-grid">
-                
-                <button type="button" class="persona-btn" onclick="quickLogin('dispatcher'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#00838f;">KR</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Durga SaiPrasad</div>
-                        <div class="persona-role">📋 Dispatcher (Customer & Fleet)</div>
-                    </div>
-                </button>
-
-                <button type="button" class="persona-btn" onclick="quickLogin('admin'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#0070f2;">VM</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Naga SaiTeja</div>
-                        <div class="persona-role">👔 Administrator (All Apps)</div>
-                    </div>
-                </button>
-
-                <button type="button" class="persona-btn" onclick="quickLogin('inspector'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#107e3e;">RP</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Kesav Maradani</div>
-                        <div class="persona-role">🚜 Yard Inspector (Check-In)</div>
-                    </div>
-                </button>
-
-                <button type="button" class="persona-btn" onclick="quickLogin('finance'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#8e44ad;">AS</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Hari Priya</div>
-                        <div class="persona-role">💳 Billing Specialist (Charges)</div>
-                    </div>
-                </button>
-
-                <button type="button" class="persona-btn" onclick="quickLogin('technician'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#e67e22;">MD</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Rohan Thakre </div>
-                        <div class="persona-role">🔧 Lead Technician (Repairs)</div>
-                    </div>
-                </button>
-
-                <button type="button" class="persona-btn" onclick="quickLogin('manager'); closeSwitchModal();">
-                    <div class="persona-avatar" style="background:#2980b9;">SV</div>
-                    <div class="persona-info">
-                        <div class="persona-name">Varshith Kumar</div>
-                        <div class="persona-role">💼 Operations Director</div>
-                    </div>
-                </button>
-
-            </div>
-        </div>
-    </div>
-
     <!-- 4. CORE JAVASCRIPT -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (window.__FIORI_APP_CONFIG) {
                 return; // Sub-app runner handles its own UI lifecycle
             }
-            // Real SAP login (XSUAA via approuter) takes precedence; demo login is only for local runs
-            loadXsuaaSession().then(realSession => {
-                if (realSession) {
-                    document.getElementById('btn-switch-role').style.display = 'none';
-                    renderLaunchpadForSession(realSession);
+            // Users are authenticated by SAP (XSUAA via the approuter); roles come from their role collections
+            loadXsuaaSession().then(session => {
+                if (session) {
+                    renderLaunchpadForSession(session);
+                    loadLiveKPIData();
                 } else {
-                    const session = getFioriSession();
-                    if (session && !isXsuaaSession(session)) {
-                        renderLaunchpadForSession(session);
-                    } else {
-                        clearFioriSession();
-                        showLoginView();
-                    }
+                    clearFioriSession();
+                    showLoginView();
+                    document.getElementById('login-status').textContent = 'You are not signed in. Open this app through its SAP app router URL to sign in.';
+                    document.getElementById('btn-sap-signin').style.display = 'block';
                 }
-                loadLiveKPIData();
             });
         });
 
@@ -1190,33 +1043,6 @@
             document.getElementById('banner-app-count').textContent = visibleAppCount + ' of ' + tiles.length + ' Apps Authorized';
         }
 
-        function handleFormLogin(e) {
-            e.preventDefault();
-            const usernameInput = document.getElementById('login-username').value.trim().toLowerCase();
-            const passwordInput = document.getElementById('login-password').value.trim();
-
-            const userEntry = window.FIORI_USERS[usernameInput];
-            if (!userEntry) {
-                showLoginError('User "' + usernameInput + '" not found. Try: dispatcher, admin, inspector, finance, technician, manager.');
-                return;
-            }
-
-            if (userEntry.pass !== passwordInput && passwordInput !== 'password123' && passwordInput !== 'admin123') {
-                showLoginError('Incorrect password for ' + usernameInput + '. (Demo password: ' + userEntry.pass + ')');
-                return;
-            }
-
-            hideLoginError();
-            const session = setFioriSession(usernameInput);
-            renderLaunchpadForSession(session);
-        }
-
-        function quickLogin(username) {
-            hideLoginError();
-            const session = setFioriSession(username);
-            renderLaunchpadForSession(session);
-        }
-
         function handleLogout() {
             const session = getFioriSession();
             clearFioriSession();
@@ -1226,32 +1052,6 @@
             }
             showLoginView();
         }
-
-        function showLoginError(msg) {
-            const errBox = document.getElementById('login-error-box');
-            const errMsg = document.getElementById('login-error-msg');
-            errMsg.textContent = msg;
-            errBox.style.display = 'flex';
-        }
-
-        function hideLoginError() {
-            document.getElementById('login-error-box').style.display = 'none';
-        }
-
-        function openSwitchModal() {
-            document.getElementById('switch-modal').style.display = 'flex';
-        }
-
-        function closeSwitchModal() {
-            document.getElementById('switch-modal').style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('switch-modal');
-            if (event.target === modal) {
-                closeSwitchModal();
-            }
-        };
 
         async function loadLiveKPIData() {
             try {
